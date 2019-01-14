@@ -20,6 +20,12 @@ public class Main{
 		//launch(args);
 		Blackjack bj = new Blackjack();
 		bj.dealHand();
-		bj.play();
+		for(int i = 0; i < 25; i++) {
+			bj.play();
+			bj.reset();
+			bj.dealHand();
+			System.out.println("------------------");
+			
+		}
 	}
 }

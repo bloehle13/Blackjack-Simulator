@@ -17,6 +17,11 @@ public abstract class GenericPlayer {
 		
 		return card;
 	}
+	
+	public void clearHand() {
+		hand.clear();
+		sum = 0;
+	}
 
 
 	public ArrayList<Card> getHand() {

@@ -5,19 +5,45 @@ public class Player extends GenericPlayer{
 	private Dealer dealer;
 	private boolean playing;
 	private boolean initHand;//helps identify if player has not hit yet
+	private boolean surrendered;
+	private boolean blackjack;
+	private boolean doubledDown;
+	private double money;
+	private int bet;
 	
-	public Player(Dealer dealer) {
+	public Player(Dealer dealer, double money, int bet) {
 		this.dealer = dealer;
 		this.playing = true;
 		this.initHand = true;
+		this.surrendered = false;
+		this.blackjack = false;
+		this.doubledDown = false;
+		this.money = money;
+		this.bet = bet;
 	}
 	
-	public void playHand(Sleeve sleeve) {
+	/**
+	 * 
+	 * @param sleeve
+	 * @return the sum of the cards
+	 */
+	public int playHand(Sleeve sleeve) {
 		Card dUpCard = dealer.getHand().get(0);
 		Card card1 = getHand().get(0);
 		Card card2 = getHand().get(1);
 		System.out.println("Dealer showing: " + dUpCard.getCard() + dUpCard.getSuit() + dUpCard.getVal());
 		while(playing) {
+			
+			if(surrendered) {
+				surrendered = false;
+				return -1;
+			}
+			
+			if(blackjack) {
+				blackjack = false;
+				return 100;
+			}
+			
 			System.out.println("Player has: " + getHand().get(0).getCard() + getHand().get(0).getSuit() + getHand().get(0).getVal() + " " + getHand().get(1).getCard() + getHand().get(1).getSuit() + getHand().get(1).getVal());
 			System.out.println("Player sum: " + getSum());
 			if((card1.getCard() == card2.getCard()) && (card1.getVal() == card2.getVal()) && (card1.getVal() != 10) && initHand) {//pair of 2-9 or ace
@@ -235,8 +261,43 @@ public class Player extends GenericPlayer{
 			initHand = false;
 			
 		}
+		
+		playing = true;
+		return getSum();
 	}
 	
+	public void resetDoubledDown() {
+		if(doubledDown) {
+			this.doubledDown = false;
+			bet /= 2;
+		}
+	}
+	
+	public void winMoney(double amt) {
+		System.out.println("Player wins $" + amt);
+		this.money += amt;
+	}
+	
+	public void bet() {
+		this.money -= this.bet;
+	}
+	
+	public double getMoney() {
+		return money;
+	}
+
+	public void setMoney(double money) {
+		this.money = money;
+	}
+
+	public int getBet() {
+		return bet;
+	}
+
+	public void setBet(int bet) {
+		this.bet = bet;
+	}
+
 	public void stand(Sleeve sleeve) {
 		System.out.println("Player is standing");
 		playing = false;
@@ -244,7 +305,13 @@ public class Player extends GenericPlayer{
 	
 	public void doubleDown(Sleeve sleeve) {
 		System.out.println("Player is doubling down");
+		Card card = hit(sleeve);
+		System.out.println("Player gets: " + card.getCard() + card.getSuit() + card.getVal());
+		System.out.println("Player sum: " + getSum());
+		money -= bet;
+		bet *= 2;
 		playing = false;
+		doubledDown = true;
 		
 	}
 	
@@ -255,12 +322,14 @@ public class Player extends GenericPlayer{
 	
 	public void surrender(Sleeve sleeve) {
 		System.out.println("Player is surrendering");
+		surrendered = true;
 		playing = false;
 	}
 	
 	public void blackjack(Sleeve sleeve) {
 		System.out.println("Player has blackjack!");
 		playing = false;
+		blackjack = true;
 		
 	}
 	
@@ -269,5 +338,6 @@ public class Player extends GenericPlayer{
 		playing = false;
 		
 	}
+	
 
 }

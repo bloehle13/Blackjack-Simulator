@@ -8,8 +8,12 @@ public class Dealer extends GenericPlayer{
 
 	}
 
-	
-	public void playHand(Sleeve sleeve) {
+	/**
+	 * 
+	 * @param sleeve
+	 * @return the dealer's sum
+	 */
+	public int playHand(Sleeve sleeve) {
 		Card upCard = getHand().get(0);
 		Card downCard = getHand().get(1);
 		Card card = null;//the card that was just hit, if applicable
@@ -19,7 +23,6 @@ public class Dealer extends GenericPlayer{
 		System.out.println("Dealer sum: " + getSum());
 		
 		while(getSum() <= 17) {
-			System.out.println("------");
 			if(getSum() == 17) {
 				if(getHand().size() == 2 && (upCard.getCard() == 'A' || downCard.getCard() == 'A')) {//checks for an ace in initial hand
 					if(getSum() == 17 && !s17) {//dealer hits on soft 17
@@ -37,6 +40,8 @@ public class Dealer extends GenericPlayer{
 				System.out.println("Dealer sum: " + getSum());
 			}
 		}
+		
+		return getSum();
 		
 	}
 	
