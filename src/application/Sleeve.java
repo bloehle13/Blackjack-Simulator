@@ -19,7 +19,7 @@ public class Sleeve {
 	/**
 	 * initialize sleeve with proper amount of decks and shuffle them all
 	 */
-	public void initSleeve() {
+	private void initSleeve() {
 		for(int i = 0; i < decks; i++) {
 			sleeve.addAll(new Deck().getDeck());
 		}

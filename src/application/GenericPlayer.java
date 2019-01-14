@@ -15,13 +15,9 @@ public abstract class GenericPlayer {
 		}
 		hand.add(card);
 		
-		System.out.println("Dealer gets: " + card.getCard() + card.getSuit() + card.getVal());
-		System.out.println("Dealer sum: " + sum);
 		return card;
 	}
-	
-	public void stand(Sleeve sleeve) {
-	}
+
 
 	public ArrayList<Card> getHand() {
 		return hand;
@@ -36,9 +32,7 @@ public abstract class GenericPlayer {
 		this.sum = sum;
 	}
 
-	protected void initHand(Sleeve sleeve) {
-		getHand().add(sleeve.giveCard());
-		getHand().add(sleeve.giveCard());
+	protected void initHand() {
 		sum = hand.get(0).getVal() + hand.get(1).getVal();
 	}
 	

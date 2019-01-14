@@ -16,8 +16,10 @@ public class Player extends GenericPlayer{
 		Card dUpCard = dealer.getHand().get(0);
 		Card card1 = getHand().get(0);
 		Card card2 = getHand().get(1);
-		int sum = card1.getVal() + card2.getVal();
+		System.out.println("Dealer showing: " + dUpCard.getCard() + dUpCard.getSuit() + dUpCard.getVal());
 		while(playing) {
+			System.out.println("Player has: " + getHand().get(0).getCard() + getHand().get(0).getSuit() + getHand().get(0).getVal() + " " + getHand().get(1).getCard() + getHand().get(1).getSuit() + getHand().get(1).getVal());
+			System.out.println("Player sum: " + getSum());
 			if((card1.getCard() == card2.getCard()) && (card1.getVal() == card2.getVal()) && (card1.getVal() != 10) && initHand) {//pair of 2-9 or ace
 				switch(card1.getVal()) {
 				case 2:
@@ -82,7 +84,7 @@ public class Player extends GenericPlayer{
 				}
 				
 			}else if((card1.getCard() == 'A' || card2.getCard() == 'A') && initHand) {//soft totals
-				switch(sum) {
+				switch(getSum()) {
 				case 13:
 					if(dUpCard.getVal() > 4 && dUpCard.getVal() < 7) {
 						doubleDown(sleeve);
@@ -142,7 +144,14 @@ public class Player extends GenericPlayer{
 					break;
 				}
 			}else{//normal total
-				switch(sum) {
+				switch(getSum()) {
+				case 4://intentional cascading
+				case 5:
+				case 6:
+				case 7:
+				case 8:
+					hit(sleeve);
+					break;
 				case 9:
 					if(dUpCard.getVal() > 2 && dUpCard.getVal() < 7) {
 						doubleDown(sleeve);
@@ -216,7 +225,7 @@ public class Player extends GenericPlayer{
 					stand(sleeve);
 					break;
 				default://4-8
-					hit(sleeve);
+					bust(sleeve);
 					break;
 				}
 				
@@ -228,19 +237,36 @@ public class Player extends GenericPlayer{
 		}
 	}
 	
+	public void stand(Sleeve sleeve) {
+		System.out.println("Player is standing");
+		playing = false;
+	}
+	
 	public void doubleDown(Sleeve sleeve) {
+		System.out.println("Player is doubling down");
+		playing = false;
 		
 	}
 	
 	public void split(Sleeve sleeve) {
-		
+		System.out.println("Player is splitting");
+		playing = false;
 	}
 	
 	public void surrender(Sleeve sleeve) {
-		
+		System.out.println("Player is surrendering");
+		playing = false;
 	}
 	
 	public void blackjack(Sleeve sleeve) {
+		System.out.println("Player has blackjack!");
+		playing = false;
+		
+	}
+	
+	public void bust(Sleeve sleeve) {
+		System.out.println("Player has busted");
+		playing = false;
 		
 	}
 

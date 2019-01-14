@@ -18,8 +18,8 @@ public class Main{
 	
 	public static void main(String[] args) {
 		//launch(args);
-		Sleeve s = new Sleeve(8, 0.75);
-		Dealer d = new Dealer();
-		d.playHand(s);
+		Blackjack bj = new Blackjack();
+		bj.dealHand();
+		bj.play();
 	}
 }
