@@ -25,7 +25,6 @@ public class Blackjack {
 		player.clearHand();
 		player.resetDoubledDown();
 		dealer.clearHand();
-		dealHand();
 	}
 	
 	public void play() {

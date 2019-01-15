@@ -238,7 +238,11 @@ public class Player extends GenericPlayer{
 					if(dUpCard.getVal() < 11) {
 						stand(sleeve);
 					}else {
-						surrender(sleeve);
+						if(initHand) {
+							surrender(sleeve);
+						}else {
+							stand(sleeve);
+						}
 					}
 					break;
 				case 18:
@@ -269,7 +273,7 @@ public class Player extends GenericPlayer{
 	public void resetDoubledDown() {
 		if(doubledDown) {
 			this.doubledDown = false;
-			bet /= 2;
+			bet = bet / 2;
 		}
 	}
 	
@@ -280,6 +284,7 @@ public class Player extends GenericPlayer{
 	
 	public void bet() {
 		this.money -= this.bet;
+		System.out.println("Player bets " + this.bet + " and now has $" + this.money);
 	}
 	
 	public double getMoney() {
@@ -304,14 +309,19 @@ public class Player extends GenericPlayer{
 	}
 	
 	public void doubleDown(Sleeve sleeve) {
-		System.out.println("Player is doubling down");
-		Card card = hit(sleeve);
-		System.out.println("Player gets: " + card.getCard() + card.getSuit() + card.getVal());
-		System.out.println("Player sum: " + getSum());
-		money -= bet;
-		bet *= 2;
-		playing = false;
-		doubledDown = true;
+		if(initHand) {
+			System.out.println("Player is doubling down");
+			Card card = hit(sleeve);
+			System.out.println("Player gets: " + card.getCard() + card.getSuit() + card.getVal());
+			System.out.println("Player sum: " + getSum());
+			money -= bet;
+			bet *= 2;
+			playing = false;
+			doubledDown = true;
+			
+		}else {
+			hit(sleeve);
+		}
 		
 	}
 	
@@ -321,9 +331,13 @@ public class Player extends GenericPlayer{
 	}
 	
 	public void surrender(Sleeve sleeve) {
-		System.out.println("Player is surrendering");
-		surrendered = true;
-		playing = false;
+		if(initHand) {
+			System.out.println("Player is surrendering");
+			surrendered = true;
+			playing = false;	
+		}else {
+			hit(sleeve);
+		}
 	}
 	
 	public void blackjack(Sleeve sleeve) {
