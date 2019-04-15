@@ -34,6 +34,11 @@ public class Sleeve {
 		return card;
 	}
 	
+	public void shuffle() {
+		sleeve.clear();
+		initSleeve();
+	}
+	
 	public boolean needsShuffling() {
 		if((double)sleeve.size() / (52 * decks) <= (1-depth)) {
 			return true;

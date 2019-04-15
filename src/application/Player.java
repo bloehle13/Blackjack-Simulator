@@ -1,5 +1,8 @@
 package application;
 
+import java.util.ArrayList;
+import java.util.Stack;
+
 public class Player extends GenericPlayer{
 	
 	private Dealer dealer;
@@ -8,6 +11,8 @@ public class Player extends GenericPlayer{
 	private boolean surrendered;
 	private boolean blackjack;
 	private boolean doubledDown;
+	private boolean hasSplit;
+	private Stack<Card> splitCards = new Stack<Card>();
 	private double money;
 	private int bet;
 	
@@ -18,6 +23,7 @@ public class Player extends GenericPlayer{
 		this.surrendered = false;
 		this.blackjack = false;
 		this.doubledDown = false;
+		this.hasSplit = false;
 		this.money = money;
 		this.bet = bet;
 	}
@@ -36,15 +42,23 @@ public class Player extends GenericPlayer{
 			
 			if(surrendered) {
 				surrendered = false;
+				initHand = false;
 				return -1;
 			}
 			
 			if(blackjack) {
 				blackjack = false;
+				initHand = false;
 				return 100;
 			}
 			
-			System.out.println("Player has: " + getHand().get(0).getCard() + getHand().get(0).getSuit() + getHand().get(0).getVal() + " " + getHand().get(1).getCard() + getHand().get(1).getSuit() + getHand().get(1).getVal());
+			
+			String playerHand = "Player has: ";
+			for(int i = 0; i < getHand().size(); i++) {
+				playerHand += String.valueOf(getHand().get(i).getCard()) + String.valueOf(getHand().get(i).getSuit()) + getHand().get(i).getVal() + " ";
+			}
+			
+			System.out.println(playerHand);
 			System.out.println("Player sum: " + getSum());
 			if((card1.getCard() == card2.getCard()) && (card1.getVal() == card2.getVal()) && (card1.getVal() != 10) && initHand) {//pair of 2-9 or ace
 				switch(card1.getVal()) {
@@ -266,8 +280,22 @@ public class Player extends GenericPlayer{
 			
 		}
 		
-		playing = true;
+		playing = true;//resetting for next hand
+
+		
 		return getSum();
+	}
+	
+	public void reset() {
+		resetDoubledDown();
+		clearHand();
+		setSum(0);
+		this.playing = true;
+		this.initHand = true;
+		this.surrendered = false;
+		this.blackjack = false;
+		this.doubledDown = false;
+		this.hasSplit = false;
 	}
 	
 	public void resetDoubledDown() {
@@ -283,8 +311,21 @@ public class Player extends GenericPlayer{
 	}
 	
 	public void bet() {
+		System.out.println("Player bets " + this.bet + " with $" + this.money);
 		this.money -= this.bet;
-		System.out.println("Player bets " + this.bet + " and now has $" + this.money);
+	}
+	
+	public boolean hasSplit() {
+		return hasSplit;
+	}
+	
+	public void resetHasSplit() {
+		hasSplit = false;
+	}
+	
+	public Stack<Card> getSplitCards(){
+		return splitCards;
+		
 	}
 	
 	public double getMoney() {
@@ -325,16 +366,22 @@ public class Player extends GenericPlayer{
 		
 	}
 	
+	/**
+	 * We need to throw this up to the Blackjack class level
+	 * @param sleeve
+	 */
 	public void split(Sleeve sleeve) {
-		System.out.println("Player is splitting");
-		playing = false;
+		hasSplit = true;
+		Card c = getHand().remove(1);
+		splitCards.push(c);
+		setSum(getSum() - c.getVal());
+		hit(sleeve);
 	}
 	
 	public void surrender(Sleeve sleeve) {
 		if(initHand) {
 			System.out.println("Player is surrendering");
-			surrendered = true;
-			playing = false;	
+			surrendered = true;	
 		}else {
 			hit(sleeve);
 		}
@@ -342,7 +389,6 @@ public class Player extends GenericPlayer{
 	
 	public void blackjack(Sleeve sleeve) {
 		System.out.println("Player has blackjack!");
-		playing = false;
 		blackjack = true;
 		
 	}
