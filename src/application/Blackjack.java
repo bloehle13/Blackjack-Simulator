@@ -9,7 +9,7 @@ public class Blackjack {
 	private Player player;
 	private ArrayList<Integer> pSums = new ArrayList<Integer>();
 	private boolean readyForDealer = true;
-	public static int HANDS = 100;
+	public static int HANDS = 9000000;
 	public static int HANDS_PLAYED = 0;
 	public static double STARTING_AMT = 1000;
 	public static int BETTING_AMT = 5;
@@ -17,7 +17,7 @@ public class Blackjack {
 	public Blackjack() {
 		this.sleeve = new Sleeve(8, 0.75);
 		this.dealer = new Dealer();
-		this.player = new Player(dealer, STARTING_AMT, BETTING_AMT);
+		this.player = new Player(dealer, STARTING_AMT, BETTING_AMT, null);
 	}
 	
 	public void dealHand() {
@@ -43,7 +43,7 @@ public class Blackjack {
 	 * stores the percent increase in money and longest streak
 	 */
 	public void saveData() {
-		DataUtility.data.add(new String[]{String.valueOf(player.getMoney() / 200.0), String.valueOf(player.getLongestStreak())});
+		DataUtility.data.add(new String[]{String.valueOf(player.getMoney() / STARTING_AMT), String.valueOf(player.getLongestStreak())});
 	}
 	
 	public void play() {

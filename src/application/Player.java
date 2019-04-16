@@ -19,7 +19,7 @@ public class Player extends GenericPlayer{
 	private int bet;
 	private AI ai;
 	
-	public Player(Dealer dealer, double money, int bet) {
+	public Player(Dealer dealer, double money, int bet, AI ai) {
 		this.dealer = dealer;
 		this.playing = true;
 		this.initHand = true;
@@ -27,7 +27,7 @@ public class Player extends GenericPlayer{
 		this.blackjack = false;
 		this.doubledDown = false;
 		this.hasSplit = false;
-		this.ai = new AI(true);
+		this.ai = ai;
 		this.streak = 0;
 		this.longestStreak = 0;
 		this.money = money;
@@ -318,13 +318,18 @@ public class Player extends GenericPlayer{
 	}
 	
 	public void bet() {
-		if(hasSplit) {//if we do not check for this, splitting compounds the betting factor
+		if(ai == null) {//not using AI
 			money -= bet;
-		}else {
-			int betFactor = ai.computeBet(streak);
-			bet *= betFactor;
-			System.out.println("Player bets " + bet + " with $" + money);
-			money -= bet;		
+		}else {//using AI
+			if(hasSplit) {//if we do not check for this, splitting compounds the betting factor
+				money -= bet;
+			}else {
+				int betFactor = ai.computeBet(streak);
+				bet *= betFactor;
+				System.out.println("Player bets " + bet + " with $" + money);
+				money -= bet;		
+			}
+			
 		}
 	}
 	
@@ -389,7 +394,10 @@ public class Player extends GenericPlayer{
 	}
 	
 	public void learn(double score) {
-		ai.learn(streak, score);
+		if(ai != null) {
+			ai.learn(streak, score);
+			
+		}
 	}
 
 	public void stand(Sleeve sleeve) {
