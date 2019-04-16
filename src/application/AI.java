@@ -10,9 +10,9 @@ public class AI {
 	private int betFactor;
 	
 	
-	public AI() {
+	public AI(boolean isLearning) {
 		bets = DataUtility.loadHashMap();
-		isLearning = true;
+		this.isLearning = isLearning;
 		betFactor = 1;
 	}
 	
@@ -42,6 +42,23 @@ public class AI {
 				betFactor = (int)(Math.random() * 5) + 1;
 			}
 			
+		}else {
+			if(bets.containsKey(streak)) {	
+            	//keep subtracting a spaces probability until it is less than the random number
+            	//another way to choose randomly while factoring in probability
+            	double[] factors = bets.get(streak).getFactors();
+            	double max = factors[0];
+            	for(int i = 1; i < factors.length; i++) {
+            		if(factors[i] > max) {
+            			betFactor = i+1;
+            			max = factors[i];
+            		}
+            	}
+				
+				
+			}else {
+				betFactor = (int)(Math.random() * 5) + 1;
+			}
 		}
 		
 		
@@ -54,16 +71,19 @@ public class AI {
 	}
 	
     public void learn(int streak, double score) {
-    	BetPercentage bp = null;
-    	if(bets.containsKey(streak)) {
-    		bp = bets.get(streak);
-    	}else {
-    		bp = new BetPercentage();
+    	if(isLearning) {
+    		BetPercentage bp = null;
+    		if(bets.containsKey(streak)) {
+    			bp = bets.get(streak);
+    		}else {
+    			bp = new BetPercentage();
+    		}
+    		double[] factors = bp.getFactors();
+    		factors[betFactor-1] = factors[betFactor-1]*(1-0.01) + score*1.01;  // Set alpha to something like 0.01
+    		//don't need this line, 
+    		bets.put(streak, bp);  // add the board state and percentages back to the hashtable
+    		
     	}
-        double[] factors = bp.getFactors();
-        factors[betFactor-1] = factors[betFactor-1]*(1-0.01) + score*1.01;  // Set alpha to something like 0.01
-        bp.setFactors(factors);  //update the object with the new percentages
-        bets.put(streak, bp);  // add the board state and percentages back to the hashtable
     }
     
 

@@ -27,7 +27,7 @@ public class Player extends GenericPlayer{
 		this.blackjack = false;
 		this.doubledDown = false;
 		this.hasSplit = false;
-		this.ai = new AI();
+		this.ai = new AI(true);
 		this.streak = 0;
 		this.longestStreak = 0;
 		this.money = money;

@@ -12,7 +12,7 @@ public class Blackjack {
 	public static int HANDS = 1000000;
 	public static int HANDS_PLAYED = 0;
 	public static double STARTING_AMT = 1000;
-	public static int BETTING_AMT = 5;
+	public static int BETTING_AMT = 10;
 
 	public Blackjack() {
 		this.sleeve = new Sleeve(8, 0.75);
