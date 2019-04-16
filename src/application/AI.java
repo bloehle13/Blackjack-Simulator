@@ -79,7 +79,7 @@ public class AI {
     			bp = new BetPercentage();
     		}
     		double[] factors = bp.getFactors();
-    		factors[betFactor-1] = factors[betFactor-1]*(1-0.01) + score*1.01;  // Set alpha to something like 0.01
+    		factors[betFactor-1] = factors[betFactor-1]*(1-0.01) + score*1.001;  // Set alpha to something like 0.01
     		//don't need this line, 
     		bets.put(streak, bp);  // add the board state and percentages back to the hashtable
     		

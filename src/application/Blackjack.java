@@ -9,10 +9,10 @@ public class Blackjack {
 	private Player player;
 	private ArrayList<Integer> pSums = new ArrayList<Integer>();
 	private boolean readyForDealer = true;
-	public static int HANDS = 1000000;
+	public static int HANDS = 100;
 	public static int HANDS_PLAYED = 0;
 	public static double STARTING_AMT = 1000;
-	public static int BETTING_AMT = 10;
+	public static int BETTING_AMT = 5;
 
 	public Blackjack() {
 		this.sleeve = new Sleeve(8, 0.75);

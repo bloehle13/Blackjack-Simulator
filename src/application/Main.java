@@ -37,11 +37,12 @@ public class Main{
 		
 		
 		
-		for(int i = 0; i < 100000; i++) {
+		for(int i = 0; i < Blackjack.HANDS; i++) {
 			bj.play();
 			bj.reset();
 			System.out.println("------------------Hand #" +  i + "------------------");
 			bj.dealHand();
+			Blackjack.HANDS_PLAYED++;
 		}
 		
 		DataUtility.saveHashMap(bj.getPlayer().getAI().getBets());

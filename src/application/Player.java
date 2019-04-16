@@ -318,10 +318,14 @@ public class Player extends GenericPlayer{
 	}
 	
 	public void bet() {
-		int betFactor = ai.computeBet(streak);
-		bet *= betFactor;
-		System.out.println("Player bets " + bet + " with $" + money);
-		money -= bet;
+		if(hasSplit) {//if we do not check for this, splitting compounds the betting factor
+			money -= bet;
+		}else {
+			int betFactor = ai.computeBet(streak);
+			bet *= betFactor;
+			System.out.println("Player bets " + bet + " with $" + money);
+			money -= bet;		
+		}
 	}
 	
 	public void adjustStreak(boolean hasWon) {
