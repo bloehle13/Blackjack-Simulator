@@ -9,11 +9,15 @@ public class Blackjack {
 	private Player player;
 	private ArrayList<Integer> pSums = new ArrayList<Integer>();
 	private boolean readyForDealer = true;
+	public static int HANDS = 1000000;
+	public static int HANDS_PLAYED = 0;
+	public static double STARTING_AMT = 1000;
+	public static int BETTING_AMT = 5;
 
 	public Blackjack() {
 		this.sleeve = new Sleeve(8, 0.75);
 		this.dealer = new Dealer();
-		this.player = new Player(dealer, 200, 5);
+		this.player = new Player(dealer, STARTING_AMT, BETTING_AMT);
 	}
 	
 	public void dealHand() {
@@ -35,6 +39,13 @@ public class Blackjack {
 		}
 	}
 	
+	/**
+	 * stores the percent increase in money and longest streak
+	 */
+	public void saveData() {
+		DataUtility.data.add(new String[]{String.valueOf(player.getMoney() / 200.0), String.valueOf(player.getLongestStreak())});
+	}
+	
 	public void play() {
 		pSums.add(player.playHand(sleeve));
 		handleSplits();
@@ -45,18 +56,24 @@ public class Blackjack {
 			if(pSum == -1) {//surrendered, dealer need not play
 				System.out.println("Player Surrenders");
 				player.winMoney((double)player.getBet() / 2);
+				player.adjustStreak(false);
+				player.learn(0.5);
 				System.out.println("Player Money: " + player.getMoney());
 				pSums.remove(i);
 				return;
 			}else if(pSum == 100) {//blackjack
 				System.out.println("Player Hits Blackjack");
 				player.winMoney((double)player.getBet() * 2.5);
+				player.adjustStreak(true);
+				player.learn(1.0);
 				System.out.println("Player Money: " + player.getMoney());
 				pSums.remove(i);
 				return;
 			}else if(pSum > 21) {//busted
 				//nothing, player lost
 				System.out.println("Player Busts");
+				player.adjustStreak(false);
+				player.learn(0.0);
 				System.out.println("Player Money: " + player.getMoney());
 				pSums.remove(i);
 				return;
@@ -77,16 +94,22 @@ public class Blackjack {
 			if(pSum == -1) {//surrendered, dealer need not play
 				System.out.println("Player Surrenders");
 				player.winMoney((double)player.getBet() / 2);
+				player.adjustStreak(false);
+				player.learn(0.5);
 				System.out.println("Player Money: " + player.getMoney());
 				return;
 			}else if(pSum == 100) {//blackjack
 				System.out.println("Player Hits Blackjack");
 				player.winMoney((double)player.getBet() * 2.5);
+				player.adjustStreak(true);
+				player.learn(1.0);
 				System.out.println("Player Money: " + player.getMoney());
 				return;
 			}else if(pSum > 21) {//busted
 				//nothing, player lost
 				System.out.println("Player Busts");
+				player.adjustStreak(false);
+				player.learn(0.0);
 				System.out.println("Player Money: " + player.getMoney());
 				return;
 			}
@@ -95,15 +118,22 @@ public class Blackjack {
 				if(dSum > 21) {
 					System.out.println("Dealer Busts");
 					player.winMoney((double)player.getBet() * 2);
+					player.adjustStreak(true);
+					player.learn(1.0);
 				}else if(pSum > dSum) {//win
 					System.out.println("Player Wins");
 					player.winMoney((double)player.getBet() * 2);
+					player.adjustStreak(true);
+					player.learn(1.0);
 				}else if(pSum == dSum) {//push
 					System.out.println("Player Pushes");
 					player.winMoney((double)player.getBet());
+					player.learn(0.5);
 				}else{//lost
 					//nothing, player lost
 					System.out.println("Player Loses");
+					player.adjustStreak(false);
+					player.learn(0.0);
 				}
 			}
 			
@@ -131,6 +161,10 @@ public class Blackjack {
 		}else {
 			readyForDealer = true;
 		}
+	}
+	
+	public Player getPlayer() {
+		return player;
 	}
 
 }

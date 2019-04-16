@@ -12,9 +12,12 @@ public class Player extends GenericPlayer{
 	private boolean blackjack;
 	private boolean doubledDown;
 	private boolean hasSplit;
+	private int streak;
+	private int longestStreak;
 	private Stack<Card> splitCards = new Stack<Card>();
 	private double money;
 	private int bet;
+	private AI ai;
 	
 	public Player(Dealer dealer, double money, int bet) {
 		this.dealer = dealer;
@@ -24,6 +27,9 @@ public class Player extends GenericPlayer{
 		this.blackjack = false;
 		this.doubledDown = false;
 		this.hasSplit = false;
+		this.ai = new AI();
+		this.streak = 0;
+		this.longestStreak = 0;
 		this.money = money;
 		this.bet = bet;
 	}
@@ -296,6 +302,7 @@ public class Player extends GenericPlayer{
 		this.blackjack = false;
 		this.doubledDown = false;
 		this.hasSplit = false;
+		this.bet = Blackjack.BETTING_AMT;
 	}
 	
 	public void resetDoubledDown() {
@@ -311,8 +318,37 @@ public class Player extends GenericPlayer{
 	}
 	
 	public void bet() {
-		System.out.println("Player bets " + this.bet + " with $" + this.money);
-		this.money -= this.bet;
+		int betFactor = ai.computeBet(streak);
+		bet *= betFactor;
+		System.out.println("Player bets " + bet + " with $" + money);
+		money -= bet;
+	}
+	
+	public void adjustStreak(boolean hasWon) {
+		if(hasWon) {
+			
+			if(streak < 0) {
+				streak = 1;
+			}else {
+				streak++;
+			}
+			
+		}else {//lost
+			
+			if(streak > 0) {
+				streak = -1;
+			}else {
+				streak--;
+			}
+			
+		}
+		
+		if(Math.abs(streak) > Math.abs(longestStreak)) 
+			longestStreak = streak;
+	}
+	
+	public int getLongestStreak() {
+		return longestStreak;
 	}
 	
 	public boolean hasSplit() {
@@ -335,6 +371,10 @@ public class Player extends GenericPlayer{
 	public void setMoney(double money) {
 		this.money = money;
 	}
+	
+	public AI getAI() {
+		return ai;
+	}
 
 	public int getBet() {
 		return bet;
@@ -342,6 +382,10 @@ public class Player extends GenericPlayer{
 
 	public void setBet(int bet) {
 		this.bet = bet;
+	}
+	
+	public void learn(double score) {
+		ai.learn(streak, score);
 	}
 
 	public void stand(Sleeve sleeve) {
